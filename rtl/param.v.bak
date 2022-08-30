@@ -1,0 +1,14 @@
+
+//i2c命令参数
+`define CMD_START   4'b0001
+`define CMD_WRITE   4'b0010
+`define CMD_READ    4'b0100
+`define CMD_STOP    4'b1000
+
+`define CMD_STATE   0x71
+`define CMD_INIT    0xE1
+`define CMD_INIT_1  0x08
+`define CMD_INIT_2  0x00
+`define CMD_MEA     0xAC
+`define CMD_MEA_1   0x33
+`define CMD_MEA_2   0x00

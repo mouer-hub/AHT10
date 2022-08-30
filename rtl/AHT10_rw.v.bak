@@ -1,0 +1,274 @@
+/*==============================*\
+Author:
+Description: 温湿度传感器控制读写
+Time: 2022.7.30
+\*==============================*/
+`include "param.v"
+
+module AHT10_rw (//写1读1
+    input               clk     ,
+    input               rst_n   ,
+    
+    // input       [7:0]   din     ,
+    // input               din_vld ,
+    input               rd_en   ,
+    output      [39:0]  dout    ,//温湿度
+    output              dout_vld,
+    input               busy    ,
+
+    output              req     ,
+    output      [3:0]   cmd     ,
+    output      [7:0]   wr_data ,
+    input       [7:0]   rd_data ,
+    input               done     //传输完成标志
+  
+);
+
+//参数定义
+localparam  WAIT     =8'b0000_0001,//上电等待40ms
+            IDLE     =8'b0000_0010,//空闲状态
+            CAL_STATE=8'b0000_0100,//判断校验使能
+            INIT     =8'b0000_1000,//初始化
+            MEASURE  =8'b0001_0000,//触发测量
+            MEA_WAIT =8'b0010_0000,//等待测量80ms
+            BUSY_STATE=8'b0100_0000,//忙状态判断
+            READ     =8'b1000_0000;//读温湿度
+
+parameter   T_40MS   =21'b2_000_000,//40ms;
+            T_80MS   =22'b4_000_000;
+
+//信号定义
+//状态转移
+reg    [7:0] state_c;
+reg    [7:0] state_n;
+//状态条件定义
+wire         wait2idle        ;
+wire         idle2cal_state   ;
+wire         cal_state2init   ;
+wire         init2cal_state   ;
+wire         cal_state2measure;
+wire         measure2mea_wait ;
+wire         mea_wait2busy_state;
+wire         busy_state2read  ;
+wire         read2idle        ;
+//等待时间计数
+reg    [21:0]   cnt_ms    ;
+wire            add_cnt_ms;
+wire            end_cnt_ms;
+//字节计数
+reg    [4:0]    cnt_byte    ;
+wire            add_cnt_byte;
+wire            end_cnt_byte;
+//字节数
+reg    [4:0]    byte_num;
+//task
+reg             req_r;
+reg    [3:0]    cmd_r;
+reg    [7:0]    data_r;
+//温湿度数据
+reg    [39:0]   data;
+
+//状态机 
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        state_c<=WAIT;
+    end
+    else begin
+        state_c<=state_n;
+    end
+end
+
+always@(*)begin
+    case(state_c)
+        WAIT:   begin
+            if(wait2idle)
+                state_n=IDLE;
+            else
+                state_n=state_c; 
+        end
+        IDLE:   begin
+            if(idle2cal_state)
+                state_n=CAL_STATE;
+            else
+                state_n=state_c;     
+        end
+        CAL_STATE:begin
+            if(cal_state2init)
+                state_n=INIT;
+            else if(cal_state2measure)
+                state_n=MEASURE;
+            else
+                state_n=state_c;
+        end
+        INIT:    begin
+            if(init2cal_state)
+                state_n=cal_state;
+            else
+                state_n=state_c;
+        end
+        MEASURE: begin
+            if(measure2mea_wait)
+                state_n=MEA_WAIT;
+            else
+                state_n=state_c;
+        end
+        MEA_WAIT:begin
+            if(mea_wait2busy_state)
+                state_n=BUSY_STATE;
+            else
+                state_n=state_c;
+        end
+        BUSY_STATE:begin
+            if(busy_state2read)
+                state_n=READ;
+            else
+                state_n=state_c;
+        end
+        REAF:    begin
+            if(read2idle)
+                state_n=IDLE;
+            else
+                state_n=state_c;
+        end
+        default:state_n=WAIT ;
+    endcase
+end
+
+assign wait2idle          =state_c==WAIT     &&end_cnt_ms    ;
+assign idle2cal_state     =state_c==IDLE     &&1'b1          ;
+assign cal_state2init     =state_c==CAL_STATE&&cnt_byte>2&&~rd_data[3]&&done   ;
+assign cal_state2measure  =state_c==CAL_STATE&&cnt_byte>2&&rd_data[3]&&done    ; 
+assign init2cal_state     =state_c==INIT     &&cnt_byte==3&&done    ;
+assign measure2mea_wait   =state_c==MEASURE  &&cnt_byte==3&&done    ; 
+assign mea_wait2busy_state=state_c==MEA_WAIT &&end_cnt_ms    ;
+assign busy_state2read    =state_c==BUSY_STATE&&cnt_byte>2&&~rd_data[7]&&done  ;
+assign read2idle          =state_c==READ      &&cnt_byte==8&&done     ;
+//等待时间计数40ms/80ms
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        cnt_ms<=1'b0;
+    end
+    else if(add_cnt_ms)begin
+        if(end_cnt_ms)begin
+            cnt_ms<=1'b0;
+        end
+        else begin
+            cnt_ms=cnt_ms+1'b1;
+        end
+    end
+    else begin
+        cnt_ms<=cnt_ms;
+    end
+end
+assign add_cnt_ms=state_c==WAIT||state_c==MEA_WAIT;
+assign end_cnt_ms=add_cnt_ms&&cnt_ms==(state_c==WAIT?T_40MS:(state_c==MEA_WAIT?T_80MS:0)) ;
+
+//字节计数
+
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        cnt_byte<=1'b0;
+    end
+    else if(add_cnt_byte)begin
+        if(end_cnt_byte)begin
+            cnt_byte<=1'b0;
+        end
+        else begin
+            cnt_byte<=cnt_byte+1'b1;
+        end
+    end
+    else begin
+        cnt_byte<=cnt_byte;
+    end
+end
+assign add_cnt_byte=(state_c==CAL_STATE||state_c==BUSY_STATE||state_c==INIT ||state_c==MEASURE||state_c==READ)&&done;
+assign end_cnt_byte=add_cnt_byte&&cnt_byte==byte_num-1;
+always@(*)begin
+    if(state_c==READ)
+        byte_num=9;
+    else 
+        byte_num=4;
+end
+
+//读写字节输出
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        TX(1'b0,4'b0,8'b0);
+    end
+    else if(state_c==CAL_STATE||state_c==BUSY_STATE)begin
+         case (cnt_byte)
+            0:TX(1'b1,{`CMD_START|`CMD_WRITE},{`I2C_ADR,`WR_BIT});//发起始位，发写控制字
+            1:TX(1'b1,{`CMD_WRITE},`CMD_STATE);//发命令 0x71
+            2:TX(1'b1,{`CMD_START|`CMD_READ},{`I2C_ADR,`RD_BIT});////发起始位，发读控制字
+            3:TX(1'b1,{`CMD_READ|`CMD_STOP},0);//读数据，发停止位 
+            default: TX(1'b0,{`CMD_READ},0);//
+         endcase
+    end
+    else if(state_c==INIT)begin
+         case(cnt_byte)
+            0:TX(1'b1,{`CMD_START|`CMD_WRITE},{`I2C_ADR,`WR_BIT});//发起始位，发写控制字
+            1:TX(1'b1,{`CMD_WRITE},`CMD_INIT);//发命令 0x71
+            2:TX(1'b1,{`CMD_WRITE},{`CMD_INIT_1});//发init参数第一字节
+            3:TX(1'b1,{`CMD_WRITE|`CMD_STOP},{`CMD_INIT_2});//发init参数第二字节,发停止位
+            default: TX(1'b0,{`CMD_READ},0);
+         endcase
+    end
+    else if(state_c==MEASURE)begin
+          case(cnt_byte)
+            0:TX(1'b1,{`CMD_START|`CMD_WRITE},{`I2C_ADR,`WR_BIT});//发起始位，发写控制字
+            1:TX(1'b1,{`CMD_WRITE},`CMD_MEA);//发命令 0x71
+            2:TX(1'b1,{`CMD_WRITE},{`CMD_MEA_1});//发init参数第一字节
+            3:TX(1'b1,{`CMD_WRITE|`CMD_STOP},{`CMD_MEA_2});//发init参数第二字节,发停止位
+            default: TX(1'b0,{`CMD_READ},0);
+         endcase
+    end
+    else if(state_c==READ)begin
+        case (cnt_byte)
+            0:TX(1'b1,{`CMD_START|`CMD_WRITE},{`I2C_ADR,`WR_BIT});//发起始位，发写控制字
+            1:TX(1'b1,{`CMD_WRITE}`CMD_STATE);//发命令 0x71
+            2:TX(1'b1,{`CMD_START|`CMD_READ},{`I2C_ADR,`RD_BIT});////发起始位，发读控制字
+            3:TX(1'b1,{`CMD_READ},0);//读数据 读状态
+            4:TX(1'b1,{`CMD_READ},0);//读数据  湿度数据
+            5:TX(1'b1,{`CMD_READ},0);//读数据  湿度数据
+            6:TX(1'b1,{`CMD_READ},0);//读数据  湿度 温度数剧
+            7:TX(1'b1,{`CMD_READ},0);//读数据  温度数据
+            8:TX(1'b1,{`CMD_READ|`CMD_STOP},0);//读数据 温度数据，发停止位
+            default: TX(1'b0,{`CMD_READ},0);//读
+        endcase
+    end
+    else begin
+         TX(1'b0,cmd_r,data_r);
+    end
+end
+//任务
+task TX;
+    input req1;
+    input [3:0] cmd1;
+    input [7:0] data1;
+    begin
+        req_r=req1;
+        cmd_r=cmd1;
+        data_r=data1;
+    end
+endtask
+
+//接收数据
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+         data<=40'd0;
+    end
+    else if(state_c==READ&&done&&cnt_byte>3)begin
+         data<={data[31:0],rd_data};
+    end
+    else begin
+         data<=data;
+    end
+end
+//输出
+assign dout=data;
+assign dout_vld=state_c==READ&&done&&cnt_byte==8;
+assign req=req_r;
+assign cmd=cmd_r;
+assign wr_data=data_r;
+endmodule
+

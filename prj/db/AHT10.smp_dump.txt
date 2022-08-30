@@ -1,0 +1,21 @@
+
+State Machine - |top|controler:u_controler|i2c_master:u_i2c|state_c
+Name state_c.STOP state_c.SACK state_c.READ state_c.RACK state_c.WRITE state_c.START state_c.IDLE 
+state_c.IDLE 0 0 0 0 0 0 0 
+state_c.START 0 0 0 0 0 1 1 
+state_c.WRITE 0 0 0 0 1 0 1 
+state_c.RACK 0 0 0 1 0 0 1 
+state_c.READ 0 0 1 0 0 0 1 
+state_c.SACK 0 1 0 0 0 0 1 
+state_c.STOP 1 0 0 0 0 0 1 
+
+State Machine - |top|controler:u_controler|AHT10_rw:u_rw_ctrl|state_c
+Name state_c.DELAY state_c.READ state_c.MEA_WAIT state_c.MEASURE state_c.INIT state_c.CAL_STATE state_c.IDLE state_c.WAIT 
+state_c.WAIT 0 0 0 0 0 0 0 0 
+state_c.IDLE 0 0 0 0 0 0 1 1 
+state_c.CAL_STATE 0 0 0 0 0 1 0 1 
+state_c.INIT 0 0 0 0 1 0 0 1 
+state_c.MEASURE 0 0 0 1 0 0 0 1 
+state_c.MEA_WAIT 0 0 1 0 0 0 0 1 
+state_c.READ 0 1 0 0 0 0 0 1 
+state_c.DELAY 1 0 0 0 0 0 0 1 

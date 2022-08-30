@@ -1,0 +1,60 @@
+/*==============================*\
+Author:mouer
+Description: 顶层
+Time:2022.7.30
+\*==============================*/
+module moduleName(
+    input    clk,
+    input    rst_n,
+    
+    //数码管
+    input   [5:0] seg_sel,
+    input   [7:0] seg_dig,
+    //i2c
+    output   scl,
+    inout    sda
+);
+//信号定义
+wire  [39:0]  dout;
+wire          dout_vld;
+wire  [23:0]  din;
+
+data_handle u_data_handle(
+   /*input           */clk     (clk),
+   /*input           */rst_n   (rst_n),
+
+   /*input   [39:0]  */din     (dout),
+   /*input           */din_vld (dout_vld),
+
+   /*output  [23:0]  */dout    (din)    
+);
+
+
+
+seg_driver u_seg_driver(
+	/*input            */.clk     (clk),
+	/*input            */.rst_n   (rst_n),
+	/*input [23:0]     */.din     (din),
+
+	/*output reg[5:0]  */.seg_sel (seg_sel),
+	/*output reg[7:0]  */.seg_dig (seg_dig)
+
+);    
+
+controler  u_controler
+(
+    /*input               */.clk     (clk),
+    /*input               */.rst_n   (rst_n) ,
+
+    /*//user port*/.
+    /*// input       [7:0]*/.   din     ,
+    /*// input            */.   din_vld ,
+    /*input               */.rd_en   (rd_en) ,
+    /*output      [39:0]  */. dout   (dout)  ,
+    /*output              */.dout_vld(dout_vld),
+    /*input               */.tx_busy (busy),//串口发送忙标志
+    /*//mem port*/.
+    /*output              */.i2c_scl (scl),
+    /*inout               */.i2c_sda (sda)
+);   
+endmodule

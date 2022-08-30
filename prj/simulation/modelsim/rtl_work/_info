@@ -1,0 +1,187 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dI:/FPGA/fpga_pro/AHT10/prj/simulation/modelsim
+vAHT10_rw
+Z1 !s110 1659489821
+!i10b 1
+!s100 i_aR=1o`[NONKBNcbTPDQ2
+IE4aOS]eZeMOKkUG?HMC`L0
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1659489385
+8I:/FPGA/fpga_pro/AHT10/rtl/AHT10_rw.v
+FI:/FPGA/fpga_pro/AHT10/rtl/AHT10_rw.v
+L0 8
+Z3 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z4 !s108 1659489821.000000
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/param.v|I:/FPGA/fpga_pro/AHT10/rtl/AHT10_rw.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/AHT10_rw.v|
+!i113 1
+Z5 o-vlog01compat -work work
+Z6 !s92 -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl
+Z7 tCvgOpt 0
+n@a@h@t10_rw
+vcontroler
+Z8 !s110 1659489820
+!i10b 1
+!s100 WhbY59GVJH5UlQ@BV5_dd2
+IH@f7E@8Oe90AJPFIHe;b@0
+R2
+R0
+w1659406030
+8I:/FPGA/fpga_pro/AHT10/rtl/controler.v
+FI:/FPGA/fpga_pro/AHT10/rtl/controler.v
+L0 6
+R3
+r1
+!s85 0
+31
+Z9 !s108 1659489820.000000
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/controler.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/controler.v|
+!i113 1
+R5
+R6
+R7
+vdata_handle
+R8
+!i10b 1
+!s100 W_4g]S4<FKK5`a@mEm@4<0
+IjhXe79V3Y1Nb>[IfC;ZDc2
+R2
+R0
+w1659488563
+8I:/FPGA/fpga_pro/AHT10/rtl/data_handle.v
+FI:/FPGA/fpga_pro/AHT10/rtl/data_handle.v
+L0 6
+R3
+r1
+!s85 0
+31
+R9
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/data_handle.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/data_handle.v|
+!i113 1
+R5
+R6
+R7
+vi2c_master
+R8
+!i10b 1
+!s100 _EPPM6O;J]l_^ig3oGb^<1
+IkT0Z@6=>49cX7^[LLgeGz3
+R2
+R0
+w1659158041
+8I:/FPGA/fpga_pro/AHT10/rtl/i2c_master.v
+FI:/FPGA/fpga_pro/AHT10/rtl/i2c_master.v
+L0 9
+R3
+r1
+!s85 0
+31
+R9
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/param.v|I:/FPGA/fpga_pro/AHT10/rtl/i2c_master.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/i2c_master.v|
+!i113 1
+R5
+R6
+R7
+vseg_driver
+R8
+!i10b 1
+!s100 k;@nJz=4`]F[iH0H4dfH@3
+IZPT3KE6aijIjdPG<cg5ae3
+R2
+R0
+w1659315840
+8I:/FPGA/fpga_pro/AHT10/rtl/seg_driver.v
+FI:/FPGA/fpga_pro/AHT10/rtl/seg_driver.v
+L0 7
+R3
+r1
+!s85 0
+31
+R9
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/seg_driver.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/seg_driver.v|
+!i113 1
+R5
+R6
+R7
+vtop
+!s110 1659489819
+!i10b 1
+!s100 oN_Nell52jbTeD:afHW2`0
+IQZO;ICTaXO]bOSg8KBnEQ0
+R2
+R0
+w1659443158
+8I:/FPGA/fpga_pro/AHT10/rtl/top.v
+FI:/FPGA/fpga_pro/AHT10/rtl/top.v
+L0 6
+R3
+r1
+!s85 0
+31
+!s108 1659489819.000000
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/top.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/top.v|
+!i113 1
+R5
+R6
+R7
+vtop_tb
+R1
+!i10b 1
+!s100 2mIFHXI;0BeK[fHF@FUkc2
+I:iRkbiLX8H6I@39Jko^]I3
+R2
+R0
+w1659443245
+8I:/FPGA/fpga_pro/AHT10/prj/../tb/top_tb.v
+FI:/FPGA/fpga_pro/AHT10/prj/../tb/top_tb.v
+L0 7
+R3
+r1
+!s85 0
+31
+R4
+!s107 I:/FPGA/fpga_pro/AHT10/prj/../tb/top_tb.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/prj/../tb|I:/FPGA/fpga_pro/AHT10/prj/../tb/top_tb.v|
+!i113 1
+R5
+!s92 -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/prj/../tb
+R7
+vuart_tx
+R8
+!i10b 1
+!s100 F00bY6R<=Dk0]IRQZGEga3
+I0:B@;V:QnY0=M_J_=7Yfi0
+R2
+R0
+w1659443126
+8I:/FPGA/fpga_pro/AHT10/rtl/uart_tx.v
+FI:/FPGA/fpga_pro/AHT10/rtl/uart_tx.v
+L0 7
+R3
+r1
+!s85 0
+31
+R9
+!s107 I:/FPGA/fpga_pro/AHT10/rtl/param.v|I:/FPGA/fpga_pro/AHT10/rtl/uart_tx.v|
+!s90 -reportprogress|300|-vlog01compat|-work|work|+incdir+I:/FPGA/fpga_pro/AHT10/rtl|I:/FPGA/fpga_pro/AHT10/rtl/uart_tx.v|
+!i113 1
+R5
+R6
+R7

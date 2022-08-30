@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Wed Aug 03 09:36:01 2022
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Standard Edition
+Revision Name : AHT10
+Top-level Entity Name : top
+Family : Cyclone IV E
+Total logic elements : 2,937
+    Total combinational functions : 2,198
+    Dedicated logic registers : 1,284
+Total registers : 1284
+Total pins : 20
+Total virtual pins : 0
+Total memory bits : 200,704
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0

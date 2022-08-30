@@ -1,0 +1,87 @@
+/*==============================*\
+Author:mouer
+Description: 数据处理
+Time:2022.7.30
+\*==============================*/
+module data_handle(
+    input            clk,
+    input            rst_n,
+
+    input   [39:0]   din,
+    input            din_vld,
+   
+    output  [23:0]   dout  ,
+    input            busy,
+    output           tx_byte_vld,
+    output  [7:0]    tx_byte  
+);
+
+reg [39:0] data;
+wire [32:0] temp;//温度
+wire [42:0] humi;//湿度
+wire [3:0] t1;
+wire [3:0] t2;
+wire [3:0] h1;
+wire [3:0] h2;
+reg  [7:0] dout;
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        data<=1'b0;
+    end
+    else if(din_vld)begin
+        data<=din; 
+    end
+    else begin
+        data<=data; 
+    end
+end
+
+assign temp=data[19:0]*200>>20-50;
+assign humi=data[39:20]*100>>20;
+
+assign t1=temp%10;
+assign t2=temp/10;
+assign h1=humi%10;
+assign h2=humi/10;
+
+assign dout={4'b1010,t2,t1,4'b1011,h2,h1};
+
+assign tx_byte=dout;
+assign tx_byte_vld=add_cnt&&!busy;
+
+reg    [4:0]    cnt    ;
+wire            add_cnt;
+wire            end_cnt;
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        cnt<=1'b0;
+    end
+    else if(add_cnt)begin
+        if(end_cnt)begin
+            cnt<=1'b0;
+        end
+        else begin
+            cnt<=cnt+1'b1;
+        end
+    end
+    else begin
+        cnt<=cnt;
+    end
+end
+assign add_cnt= din_vld&&busy;
+assign end_cnt=add_cnt&&cnt==11 ;
+always@(posedge clk,negedge rst_n)begin
+    if(!rst_n)begin
+        dout<=0;
+    end
+    else begin
+         case(cnt)
+            0: dout<=1;
+            1: dout<=2;
+            5: dout<=8'ha1;
+            6: dout<=8'he6;
+            default:dout<=0;
+         endcase
+    end
+end
+endmodule

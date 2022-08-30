@@ -1,0 +1,24 @@
+transcript on
+if {[file exists rtl_work]} {
+	vdel -lib rtl_work -all
+}
+vlib rtl_work
+vmap work rtl_work
+
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/top.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/seg_driver.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/param.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/data_handle.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/controler.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/uart_tx.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/i2c_master.v}
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/rtl {I:/FPGA/fpga_pro/AHT10/rtl/AHT10_rw.v}
+
+vlog -vlog01compat -work work +incdir+I:/FPGA/fpga_pro/AHT10/prj/../tb {I:/FPGA/fpga_pro/AHT10/prj/../tb/top_tb.v}
+
+vsim -t 1ps -L altera_ver -L lpm_ver -L sgate_ver -L altera_mf_ver -L altera_lnsim_ver -L cycloneive_ver -L rtl_work -L work -voptargs="+acc"  top_tb
+
+add wave *
+view structure
+view signals
+run -all
